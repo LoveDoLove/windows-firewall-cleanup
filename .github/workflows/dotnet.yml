@@ -25,9 +25,12 @@ jobs:
       - name: Build project
         run: msbuild /p:Configuration=Release /p:TargetFrameworkVersion=v4.8 /p:RestorePackagesConfig=true
 
-      - name: Publish artifacts
-        uses: actions/upload-artifact@v3
+      - name: Generate tag name and set it as an environment variable
+        run: echo "RELEASE_TAG=RELEASE_$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+        
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: published-app
-          path: |
+          files: |
             **/bin/Release/**
+          tag_name: ${{ env.RELEASE_TAG }}
